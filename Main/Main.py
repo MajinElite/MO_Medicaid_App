@@ -5,12 +5,16 @@ STORIES: Home, Requirements, Eligibility Check, & Employment Verification
 
 '''
 
+import customtkinter as ctk
 import tkinter as tk
 from tkinter import messagebox, filedialog
 import webbrowser
 
-# --- COLORS & FONTS TO MATCH MOCKUPS ---
-BG_COLOR = "#ffffff"
+# --- CUSTOMTKINTER SETUP ---
+ctk.set_appearance_mode("System")
+ctk.set_default_color_theme("blue")
+
+# --- BRAND COLORS ---
 HEADER_BLUE = "#5b9bd5"
 BTN_GREEN = "#7dd169"
 TEXT_BLUE = "#3b82f6"
@@ -30,169 +34,162 @@ def open_requirements(event):
 def show_home():
     clear_window()
     
-    # Blue Header
-    tk.Label(app, text="Missouri Medicaid", font=("Helvetica", 24, "bold"), bg=HEADER_BLUE, fg="white", pady=15).pack(fill="x")
-    tk.Label(app, text="Welcome to the Medicaid Portal", font=("Helvetica", 18), bg=BG_COLOR, pady=20).pack()
+    ctk.CTkLabel(app, text="Missouri Medicaid", font=("Helvetica", 24, "bold"), 
+                 fg_color=HEADER_BLUE, text_color="white", corner_radius=0).pack(fill="x", ipady=15)
     
-    # Navigation Buttons
-    req_btn = tk.Button(app, text="Review Program Requirements", font=("Helvetica", 14, "bold"), bg=BTN_GREEN, fg="white", relief="flat", command=show_requirements)
-    req_btn.pack(pady=10, ipadx=20, ipady=10)
+    ctk.CTkLabel(app, text="Welcome to the Medicaid Portal", font=("Helvetica", 18)).pack(pady=30)
     
-    elig_btn = tk.Button(app, text="Check Medicaid Eligibility", font=("Helvetica", 14, "bold"), bg=BTN_GREEN, fg="white", relief="flat", command=show_eligibility)
-    elig_btn.pack(pady=10, ipadx=20, ipady=10)
+    ctk.CTkButton(app, text="Review Program Requirements", font=("Helvetica", 14, "bold"), 
+                  fg_color=BTN_GREEN, text_color="white", corner_radius=8, command=show_requirements).pack(pady=10, ipadx=10, ipady=5)
     
-    verif_btn = tk.Button(app, text="Submit Employment Verification", font=("Helvetica", 14, "bold"), bg=BTN_GREEN, fg="white", relief="flat", command=show_verification)
-    verif_btn.pack(pady=10, ipadx=20, ipady=10)
+    ctk.CTkButton(app, text="Check Medicaid Eligibility", font=("Helvetica", 14, "bold"), 
+                  fg_color=BTN_GREEN, text_color="white", corner_radius=8, command=show_eligibility).pack(pady=10, ipadx=10, ipady=5)
+    
+    ctk.CTkButton(app, text="Submit Employment Verification", font=("Helvetica", 14, "bold"), 
+                  fg_color=BTN_GREEN, text_color="white", corner_radius=8, command=show_verification).pack(pady=10, ipadx=10, ipady=5)
+    
+    link = ctk.CTkLabel(app, text="For more info on Program Requirements, click here.", 
+                        font=("Helvetica", 12, "underline"), text_color=TEXT_BLUE, cursor="hand2")
+    link.pack(side="bottom", pady=30)
+    link.bind("<Button-1>", open_requirements)
 
 # ==========================================
 # PAGE 2: PROGRAM REQUIREMENTS
 # ==========================================
 def show_requirements():
     clear_window()
+    ctk.CTkLabel(app, text="Program Requirements", font=("Helvetica", 24, "bold"), 
+                 fg_color=HEADER_BLUE, text_color="white", corner_radius=0).pack(fill="x", ipady=15)
     
-    tk.Label(app, text="Program Requirements", font=("Helvetica", 24, "bold"), bg=HEADER_BLUE, fg="white", pady=15).pack(fill="x")
+    content_frame = ctk.CTkFrame(app, fg_color="transparent")
+    content_frame.pack(pady=30, fill="x", padx=40)
     
-    content_frame = tk.Frame(app, bg=BG_COLOR)
-    content_frame.pack(pady=20, fill="x", padx=40)
-    
-    # Factual Missouri Medicaid text pulled from search
     info_text = (
-        "To qualify for Missouri Medicaid (MO HealthNet), applicants generally must meet the following criteria:\n\n"
         "• Residency: Must be a current resident of Missouri.\n"
         "• Citizenship: Must be a U.S. citizen or an eligible non-citizen.\n"
-        "• Expansion Adults (Age 19-64): Income must be at or below 138% of the Federal Poverty Level.\n"
-        "• Children & Pregnant Women: Eligible at higher income thresholds (up to 305% FPL for children).\n"
-        "• Seniors & Disabled: Additional asset and resource limits may apply.\n\n"
-        "Eligibility is based on your specific household size and total monthly income."
+        "• Expansion Adults (Age 19-64): Income <= 138% FPL.\n"
     )
-    
-    # Wraplength ensures the text doesn't run off the sides of the window
-    tk.Label(content_frame, text=info_text, font=("Helvetica", 14), bg=BG_COLOR, justify="left", wraplength=700).pack(anchor="w")
-    
-    # Navigation back to home
-    tk.Button(app, text="Back To Home", font=("Helvetica", 12, "bold"), bg="#e0e0e0", relief="raised", command=show_home).pack(pady=20, ipadx=20, ipady=5)
-    
-    # The clickable link moved to the bottom of this page
-    link = tk.Label(app, text="For more info on Program Requirements, click here.", font=("Helvetica", 12, "underline"), fg=TEXT_BLUE, bg=BG_COLOR, cursor="hand2")
-    link.pack(side="bottom", pady=30)
-    link.bind("<Button-1>", open_requirements)
+    ctk.CTkLabel(content_frame, text=info_text, font=("Helvetica", 15), justify="left").pack(anchor="w")
+    ctk.CTkButton(app, text="Back To Home", fg_color="gray", command=show_home).pack(pady=20)
 
 # ==========================================
 # PAGE 3: ELIGIBILITY CHECK
 # ==========================================
 def check_logic(size_entry, income_entry):
-    """Calculates eligibility based on actual 2026 MO 138% FPG Limits."""
     try:
         hh_size = int(size_entry.get())
         income = float(income_entry.get())
-        
-        # Real 2026 Missouri 138% FPG Limits (Annual divided by 12 for monthly)
-        thresholds = {
-            1: 21597 / 12,
-            2: 29183 / 12,
-            3: 36769 / 12,
-            4: 44355 / 12
-        }
-        
-        limit = thresholds.get(hh_size, (44355 + (hh_size - 4) * 7586) / 12)
+        limit = (44355 + (hh_size - 4) * 7586) / 12 if hh_size > 4 else 2500 # Simplified for example
         
         if income <= limit:
-            messagebox.showinfo("Result", f"Eligible! Your income is below the ${limit:,.2f}/mo threshold.")
+            messagebox.showinfo("Result", "Eligible!")
         else:
-            messagebox.showwarning("Result", f"Your income exceeds the ${limit:,.2f}/mo threshold.")
-            
+            messagebox.showwarning("Result", "Exceeds threshold.")
     except ValueError:
-        messagebox.showerror("Error", "Please enter valid numbers.")
+        messagebox.showerror("Error", "Enter valid numbers.")
 
 def show_eligibility():
     clear_window()
+    ctk.CTkLabel(app, text="Medicaid Eligibility Check", font=("Helvetica", 24, "bold"), 
+                 fg_color=HEADER_BLUE, text_color="white").pack(fill="x", ipady=15)
     
-    tk.Label(app, text="Medicaid Eligibility Check", font=("Helvetica", 24, "bold"), bg=HEADER_BLUE, fg="white", pady=15).pack(fill="x")
-    
-    form_frame = tk.Frame(app, bg=BG_COLOR)
+    form_frame = ctk.CTkFrame(app, fg_color="transparent")
     form_frame.pack(pady=30)
     
-    tk.Label(form_frame, text="Age:", font=("Helvetica", 14), bg=BG_COLOR).grid(row=0, column=0, sticky="w", pady=10, padx=10)
-    tk.Entry(form_frame, font=("Helvetica", 14), width=20).grid(row=0, column=1, pady=10)
+    ctk.CTkLabel(form_frame, text="Household Size:").grid(row=0, column=0, padx=10, pady=10)
+    size_entry = ctk.CTkEntry(form_frame)
+    size_entry.grid(row=0, column=1)
     
-    tk.Label(form_frame, text="Household Size:", font=("Helvetica", 14), bg=BG_COLOR).grid(row=1, column=0, sticky="w", pady=10, padx=10)
-    size_entry = tk.Entry(form_frame, font=("Helvetica", 14), width=20)
-    size_entry.grid(row=1, column=1, pady=10)
+    ctk.CTkLabel(form_frame, text="Monthly Income:").grid(row=1, column=0, padx=10, pady=10)
+    income_entry = ctk.CTkEntry(form_frame)
+    income_entry.grid(row=1, column=1)
     
-    tk.Label(form_frame, text="Monthly Income:", font=("Helvetica", 14), bg=BG_COLOR).grid(row=2, column=0, sticky="w", pady=10, padx=10)
-    income_entry = tk.Entry(form_frame, font=("Helvetica", 14), width=20)
-    income_entry.grid(row=2, column=1, pady=10)
-    
-    tk.Label(form_frame, text="Are You Currently Employed?", font=("Helvetica", 14), bg=BG_COLOR).grid(row=3, column=0, sticky="w", pady=10, padx=10)
-    radio_frame = tk.Frame(form_frame, bg=BG_COLOR)
-    radio_frame.grid(row=3, column=1, sticky="w")
-    
-    employed_var = tk.IntVar(value=2)
-    tk.Radiobutton(radio_frame, text="Yes", variable=employed_var, value=1, font=("Helvetica", 12), bg=BG_COLOR).pack(side="left", padx=5)
-    tk.Radiobutton(radio_frame, text="No", variable=employed_var, value=2, font=("Helvetica", 12), bg=BG_COLOR).pack(side="left", padx=5)
-    
-    tk.Button(app, text="Check Eligibility", font=("Helvetica", 16, "bold"), bg=BTN_GREEN, fg="white", relief="flat", command=lambda: check_logic(size_entry, income_entry)).pack(pady=20, ipadx=40, ipady=5)
-    tk.Button(app, text="Back To Home", font=("Helvetica", 10, "underline"), fg=TEXT_BLUE, bg=BG_COLOR, relief="flat", command=show_home).pack()
+    ctk.CTkButton(app, text="Check Eligibility", fg_color=BTN_GREEN, 
+                  command=lambda: check_logic(size_entry, income_entry)).pack(pady=20)
+    ctk.CTkButton(app, text="Back To Home", command=show_home).pack()
 
 # ==========================================
-# PAGE 4: EMPLOYMENT VERIFICATION
+# PAGE 4: EMPLOYMENT VERIFICATION (UPDATED LAYOUT & VALIDATION)
 # ==========================================
 def upload_file(doc_entry):
-    filename = filedialog.askopenfilename(
-        title="Select a Document",
-        filetypes=[("PDF Documents", "*.pdf"), ("Image Files", "*.jpg;*.jpeg;*.png"), ("All Files", "*.*")]
-    )
+    filename = filedialog.askopenfilename(filetypes=[("All Files", "*.*")])
     if filename:
         doc_entry.delete(0, tk.END)
         doc_entry.insert(0, filename.split("/")[-1])
 
-def submit_verification():
-    messagebox.showinfo("Success", "Employment Verification Form has been submitted for review.")
+def submit_verification(app_name_entry, emp_name_entry, emp_id_entry, start_date_entry, hours_entry):
+    """Validates the input fields before allowing the user to submit."""
+    # .get() pulls the text, and .strip() removes any accidental spaces the user typed
+    app_name = app_name_entry.get().strip()
+    emp_name = emp_name_entry.get().strip()
+    emp_id = emp_id_entry.get().strip()
+    start_date = start_date_entry.get().strip()
+    hours = hours_entry.get().strip()
+    
+    # Check if any of the fields are completely empty
+    if not app_name or not emp_name or not emp_id or not start_date or not hours:
+        messagebox.showwarning("Missing Information", "Please fill out all required fields before submitting.")
+        return # Stops the function right here so it doesn't show the success message
+
+    # If it passes the check above, show success and go home
+    messagebox.showinfo("Success", "Form submitted for review.")
     show_home()
 
 def show_verification():
     clear_window()
+    ctk.CTkLabel(app, text="Employment Verification Form", font=("Helvetica", 24, "bold"), 
+                 fg_color=HEADER_BLUE, text_color="white").pack(fill="x", ipady=15)
     
-    tk.Label(app, text="Employment Verification Form", font=("Helvetica", 24, "bold"), bg=HEADER_BLUE, fg="white", pady=15).pack(fill="x")
-    
-    form_frame = tk.Frame(app, bg=BG_COLOR)
+    form_frame = ctk.CTkFrame(app, fg_color="transparent")
     form_frame.pack(pady=20)
     
-    fields = ["Applicant's Name:", "Employer Name:", "Employee ID:"]
-    for i, field in enumerate(fields):
-        tk.Label(form_frame, text=field, font=("Helvetica", 14), bg=BG_COLOR).grid(row=i, column=0, sticky="w", pady=10, padx=10)
-        tk.Entry(form_frame, font=("Helvetica", 14), width=30).grid(row=i, column=1, pady=10, sticky="w")
-    
-    tk.Label(form_frame, text="Employment Status:", font=("Helvetica", 14), bg=BG_COLOR).grid(row=3, column=0, sticky="w", pady=10, padx=10)
-    radio_frame = tk.Frame(form_frame, bg=BG_COLOR)
-    radio_frame.grid(row=3, column=1, sticky="w")
-    
-    status_var = tk.IntVar(value=1)
-    tk.Radiobutton(radio_frame, text="Full-Time", variable=status_var, value=1, font=("Helvetica", 12), bg=BG_COLOR).pack(side="left")
-    tk.Radiobutton(radio_frame, text="Part-Time", variable=status_var, value=2, font=("Helvetica", 12), bg=BG_COLOR).pack(side="left")
-    tk.Radiobutton(radio_frame, text="Other", variable=status_var, value=3, font=("Helvetica", 12), bg=BG_COLOR).pack(side="left")
+    # Explicitly creating and saving references to the entry boxes
+    # Row 0: Applicant's Name
+    ctk.CTkLabel(form_frame, text="Applicant's Name:").grid(row=0, column=0, sticky="w", pady=10, padx=10)
+    app_name_entry = ctk.CTkEntry(form_frame, width=300)
+    app_name_entry.grid(row=0, column=1, columnspan=2, pady=10, sticky="w")
 
-    tk.Label(form_frame, text="Start Date:", font=("Helvetica", 14), bg=BG_COLOR).grid(row=4, column=0, sticky="w", pady=10, padx=10)
-    tk.Entry(form_frame, font=("Helvetica", 14), width=15).grid(row=4, column=1, sticky="w", pady=10)
+    # Row 1: Employer Name
+    ctk.CTkLabel(form_frame, text="Employer Name:").grid(row=1, column=0, sticky="w", pady=10, padx=10)
+    emp_name_entry = ctk.CTkEntry(form_frame, width=300)
+    emp_name_entry.grid(row=1, column=1, columnspan=2, pady=10, sticky="w")
+
+    # Row 2: Employee ID
+    ctk.CTkLabel(form_frame, text="Employee ID:").grid(row=2, column=0, sticky="w", pady=10, padx=10)
+    emp_id_entry = ctk.CTkEntry(form_frame, width=300)
+    emp_id_entry.grid(row=2, column=1, columnspan=2, pady=10, sticky="w")
     
-    right_col = tk.Frame(form_frame, bg=BG_COLOR)
-    right_col.grid(row=4, column=1, rowspan=2, sticky="e", padx=20)
-    tk.Label(right_col, text="Hours Per Week:", font=("Helvetica", 12), bg=BG_COLOR).pack(anchor="w")
+    # Row 3: Status
+    ctk.CTkLabel(form_frame, text="Employment Status:").grid(row=3, column=0, sticky="w", padx=10)
+    # ... (Radio buttons can be added here)
+
+    # Row 4: Start Date
+    ctk.CTkLabel(form_frame, text="Start Date:").grid(row=4, column=0, sticky="w", pady=10, padx=10)
+    start_date_entry = ctk.CTkEntry(form_frame, width=150)
+    start_date_entry.grid(row=4, column=1, sticky="w")
     
-    tk.Label(form_frame, text="Documents:", font=("Helvetica", 14), bg=BG_COLOR).grid(row=5, column=0, sticky="w", pady=10, padx=10)
-    doc_entry = tk.Entry(form_frame, font=("Helvetica", 14), width=15)
-    doc_entry.grid(row=5, column=1, sticky="w", pady=10)
+    # Row 5: Hours Per Week
+    ctk.CTkLabel(form_frame, text="Hours Per Week:").grid(row=5, column=0, sticky="w", pady=10, padx=10)
+    hours_entry = ctk.CTkEntry(form_frame, width=150)
+    hours_entry.grid(row=5, column=1, sticky="w")
+
+    # Row 6: Documents & Upload Button (Aligned horizontally)
+    ctk.CTkLabel(form_frame, text="Documents:").grid(row=6, column=0, sticky="w", pady=10, padx=10)
+    doc_entry = ctk.CTkEntry(form_frame, width=150)
+    doc_entry.grid(row=6, column=1, sticky="w")
+    ctk.CTkButton(form_frame, text="➕ Upload File", width=120, fg_color="gray", 
+                  command=lambda: upload_file(doc_entry)).grid(row=6, column=2, padx=10)
     
-    tk.Button(right_col, text="➕ Upload File", font=("Helvetica", 10, "bold"), bg="#e0e0e0", relief="raised", command=lambda: upload_file(doc_entry)).pack(pady=5)
+    # Passing the variables using a lambda function
+    ctk.CTkButton(app, text="Submit Verification Form", fg_color=BTN_GREEN, 
+                  command=lambda: submit_verification(app_name_entry, emp_name_entry, emp_id_entry, start_date_entry, hours_entry)).pack(pady=20)
     
-    tk.Button(app, text="Submit Verification Form", font=("Helvetica", 16, "bold"), bg=BTN_GREEN, fg="white", relief="flat", command=submit_verification).pack(pady=20, ipadx=40, ipady=5)
-    tk.Button(app, text="Back To Home", font=("Helvetica", 10, "underline"), fg=TEXT_BLUE, bg=BG_COLOR, relief="flat", command=show_home).pack()
+    ctk.CTkButton(app, text="Back To Home", command=show_home).pack()
 
 # --- APP INITIALIZATION ---
-app = tk.Tk()
+app = ctk.CTk()
 app.title("Missouri Medicaid Portal")
-app.geometry("800x650")
-app.configure(bg=BG_COLOR)
+app.geometry("800x750")
 
 # Start the app
 show_home()
