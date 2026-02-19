@@ -1,5 +1,5 @@
 '''
-DEVELOPER: Duy Huynh
+DEVELOPER: Duy Huynh, Ammar Osmun
 TASK: Sprint 2
 STORIES: Home, Requirements, Eligibility Check, & Employment Verification
 
