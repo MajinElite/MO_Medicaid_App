@@ -14,9 +14,9 @@ Built With:
 - Tkinter for the GUI
 
 Team Members:
-- Ammar Osmun
-- Tommy Ngo
-- Duy Huynh
-- Lauren Brinkmann
+- Ammar Osmun (Front-end, Back-end)
+- Tommy Ngo (Back-end)
+- Duy Huynh (Front-end)
+- Lauren Brinkmann (Documentation, Testing)
 
 Currently working on sprint 2 requirements. 
