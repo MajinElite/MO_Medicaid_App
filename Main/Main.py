@@ -81,7 +81,7 @@ def show_requirements():
     back_link.bind("<Button-1>", lambda e: show_home())
 
 # ==========================================
-# PAGE 3: ELIGIBILITY CHECK (UPDATED 2026 LOGIC)
+# PAGE 3: ELIGIBILITY CHECK
 # ==========================================
 def check_logic(age_entry, size_entry, income_entry):
     # Validation check
