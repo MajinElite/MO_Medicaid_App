@@ -1,0 +1,33 @@
+{
+  "users": [
+    {
+      "email": "applicant1@gmail.com",
+      "password": "1234",
+      "role": "applicant"
+    },
+    {
+      "email": "caseworker1@gmail.com",
+      "password": "abcd",
+      "role": "caseworker"
+    }
+  ],
+  "applications": [
+    {
+      "app_id": "F61C5E90",
+      "applicant_email": "applicant1@gmail.com",
+      "status": "Approved",
+      "deny_reason": "",
+      "created_at": "2026-02-20T21:07:29",
+      "updated_at": "2026-02-20T21:08:17",
+      "form": {
+        "applicant_name": "Blake",
+        "employer_name": "Jason Todd",
+        "employee_id": "13513",
+        "employment_status": "Full-Time",
+        "start_date": "1/20/2025",
+        "hours_per_week": "40",
+        "document_name": "none"
+      }
+    }
+  ]
+}
