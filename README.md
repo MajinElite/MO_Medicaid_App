@@ -15,7 +15,7 @@ CURRENT FEATURES
 - Program Requirements page explaining Missouri Medicaid eligibility criteria
 - Eligibility Check form for estimating qualification based on household size and income
 - Employment Verification form with structured applicant and employer fields
-- Secure document upload system (files stored in database using Base64)
+- Document upload system (files stored in database using Base64)
 - Caseworker dashboard for reviewing applications
 - Approve / Deny system with denial reason feedback
 - Downloadable uploaded documents from the Caseworker View More popup
