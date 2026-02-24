@@ -1,0 +1,81 @@
+"""
+MISSOURI MEDICAID PORTAL
+IS:241 Spring 2026
+Group Contribution Overview
+"""
+
+------------------------------------------------------------
+GROUP MEMBERS
+------------------------------------------------------------
+
+Ammar Osmun  
+Duy Huynh  
+Tommy Ngo  
+Lauren Brinkman  
+
+------------------------------------------------------------
+PROJECT STRUCTURE OVERVIEW
+------------------------------------------------------------
+
+Main.py  
+verification_gui.py  
+status_gui.py  
+review_program_requirements_gui.py  
+login_gui.py  
+eligibility_gui.py  
+caseworker_view_popup.py  
+caseworker_dashboard_gui.py  
+applicant_dashboard_gui.py  
+
+Data:
+database.json
+
+Back_end:  
+database.json  
+storage.py  
+auth.py  
+application_logic.py  
+__init__.py  
+
+------------------------------------------------------------
+INDIVIDUAL CONTRIBUTIONS
+------------------------------------------------------------
+
+Duy Huynh (Front-end):
+- Started the project and built the original base version of the application.
+- Created the first GUI layout and basic application flow.
+- Set up the early structure so everything could run together.
+- Helped connect the main system components.
+
+Ammar Osmun (Front-end + Back-end + Documentation):
+- Restructured and reorganized the entire project for better clarity and modular design.
+- Separated the GUI into individual Python files instead of keeping everything inside one file.
+- Turned Main.py into a navigation controller instead of having all GUI layout and logic inside it.
+- Developed application_logic.py for handling application processing.
+- Implemented the authentication (auth.py).
+- Added new features and improved overall functionality.
+- Improved the UI layout and overall structure.
+- Connected the frontend and backend systems properly.
+- Contributed to documentation and project reports.
+
+Tommy Ngo (Back-end):
+- Created and structured the database.json file.
+- Built storage.py to handle loading and saving data.
+- Helped set up how data is stored and maintained throughout the application.
+
+Lauren Brinkman (Documentation):
+- Focused on project documentation.
+- Contributed to sprint reports and written assignments.
+- Helped organize and clarify written project materials.
+
+------------------------------------------------------------
+ARCHITECTURE NOTES
+------------------------------------------------------------
+
+- All frontend GUI files are located in the Front_end folder.
+- All backend logic, authentication, and storage files are located in the Back_end folder.
+- Data is handled using a JSON database file.
+- Main.py controls application startup and navigation.
+- All modules are connected through controller-based navigation (Main.py).
+- The project follows a modular separation between UI and backend logic.
+"""

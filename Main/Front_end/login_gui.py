@@ -49,7 +49,7 @@ class LoginScreen(ctk.CTkFrame):
 
         ctk.CTkLabel(
             self,
-            text="Credentials come from database.json (backend).",
+            text="Test Credentials come from database.json (backend).",
             text_color="gray"
         ).pack(pady=5)
 
