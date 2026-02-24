@@ -1,6 +1,6 @@
 MO_Medicaid_App
 
-This is a group project for IS:241 System Analysis & Design. The goal of the application is to create a simple and user-friendly system that helps Missouri Medicaid applicants & Caseworkers:
+The goal of the application is to create a simple and user-friendly system that helps Missouri Medicaid applicants & Caseworkers:
 
 - Understand program requirements
 - Check potential eligibility
