@@ -1,8 +1,3 @@
-'''
-Main application file for Missouri Medicaid Portal.
-Contains the main App class that manages navigation and user state.
-By: Ammar Osmun (Refining and restructure navigation, file structure), Duy huynh (Beginning front-end development and design)
-'''
 import customtkinter as ctk
 
 from Front_end.login_gui import LoginScreen
@@ -13,7 +8,7 @@ from Front_end.status_gui import StatusScreen
 from Front_end.caseworker_dashboard_gui import CaseworkerDashboard
 from Front_end.review_program_requirements_gui import ReviewProgramRequirementsScreen  # <-- NEW IMPORT
 
-# --- CUSTOMTKINTER SETUP ---
+# --- The Customtkinter setup ---
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
 
