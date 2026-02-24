@@ -1,22 +1,36 @@
-# MO_Medicaid_App
+MO_Medicaid_App
 
-This project is a team-based application developed for IS:241. The goal of the application is to create a simple and user-friendly system that helps Missouri Medicaid applicants understand program requirements, check potential eligibility, and submit employment verification information.
+This is a group project for IS:241 System Analysis & Design. The goal of the application is to create a simple and user-friendly system that helps Missouri Medicaid applicants & Caseworkers:
 
-The app currently includes:
+- Understand program requirements
+- Check potential eligibility
+- Submit employment verification information
+- Upload supporting documents
+- Track application status
+
+------------------------------------------------------------
+CURRENT FEATURES
+------------------------------------------------------------
+
 - Program Requirements page explaining Missouri Medicaid eligibility criteria
-- Eligibility Check form where users enter household size and income to see if they may qualify
-- Employment Verification form for submitting applicant and employer information
-- Basic file upload functionality for employment documents
-- Navigation between pages within the application
+- Eligibility Check form for estimating qualification based on household size and income
+- Employment Verification form with structured applicant and employer fields
+- Secure document upload system (files stored in database using Base64)
+- Caseworker dashboard for reviewing applications
+- Approve / Deny system with denial reason feedback
+- Downloadable uploaded documents from the Caseworker View More popup
+- Application status tracking for applicants
+- Modular navigation system controlled through Main.py
 
-Built With:
+------------------------------------------------------------
+BUILT WITH
+------------------------------------------------------------
+
 - Python
-- Tkinter for the GUI
+- CustomTkinter (GUI)
+- JSON for data storage
 
-Team Members:
-- Ammar Osmun (Front-end, Back-end)
-- Tommy Ngo (Back-end)
-- Duy Huynh (Front-end)
-- Lauren Brinkmann (Documentation, Testing)
+------------------------------------------------------------
 
-Currently working on sprint 2 requirements. 
+Current Development Phase:
+Sprint 2 implementation and feature expansion.
