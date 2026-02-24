@@ -29,12 +29,12 @@ class LoginScreen(ctk.CTkFrame):
         form.pack(pady=10)
 
         # Email
-        ctk.CTkLabel(form, text="Email").grid(row=0, column=0, sticky="w", padx=10, pady=10)
+        ctk.CTkLabel(form, text="Email:").grid(row=0, column=0, sticky="w", padx=10, pady=10)
         self.email_entry = ctk.CTkEntry(form, width=280)
         self.email_entry.grid(row=0, column=1, pady=10)
 
         # Password
-        ctk.CTkLabel(form, text="Password").grid(row=1, column=0, sticky="w", padx=10, pady=10)
+        ctk.CTkLabel(form, text="Password:").grid(row=1, column=0, sticky="w", padx=10, pady=10)
         self.password_entry = ctk.CTkEntry(form, width=280, show="*")
         self.password_entry.grid(row=1, column=1, pady=10)
 

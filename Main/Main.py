@@ -1,4 +1,8 @@
-# Main.py
+'''
+Main application file for Missouri Medicaid Portal.
+Contains the main App class that manages navigation and user state.
+By: Ammar Osmun (Refining and restructure navigation, file structure), Duy huynh (Beginning front-end development and design)
+'''
 import customtkinter as ctk
 
 from Front_end.login_gui import LoginScreen
@@ -7,6 +11,7 @@ from Front_end.eligibility_gui import EligibilityScreen
 from Front_end.verification_gui import VerificationScreen
 from Front_end.status_gui import StatusScreen
 from Front_end.caseworker_dashboard_gui import CaseworkerDashboard
+from Front_end.review_program_requirements_gui import ReviewProgramRequirementsScreen  # <-- NEW IMPORT
 
 # --- CUSTOMTKINTER SETUP ---
 ctk.set_appearance_mode("System")
@@ -60,6 +65,12 @@ class App(ctk.CTk):
     def show_status(self):
         self.clear_window()
         StatusScreen(self.container, self).pack(fill="both", expand=True)
+
+    # ---------- NEW ROUTE ----------
+    def show_review_program_requirements(self):
+        self.clear_window()
+        ReviewProgramRequirementsScreen(self.container, self).pack(fill="both", expand=True)
+
 
 if __name__ == "__main__":
     app = App()
