@@ -1,5 +1,3 @@
-# Back_end/application_logic.py
-
 from datetime import datetime
 import uuid
 

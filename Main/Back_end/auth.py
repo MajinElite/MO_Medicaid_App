@@ -1,4 +1,3 @@
-# Back_end/auth.py
 import json
 import os
 

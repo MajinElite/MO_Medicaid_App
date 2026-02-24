@@ -1,4 +1,3 @@
-# Back_end/storage.py
 import json
 import os
 
