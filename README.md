@@ -1,4 +1,4 @@
-PROFESSOR PLEASE REVIEW "Contribution.txt" TO SEE WHO DID WHAT, THANK YOU.
+PROFESSOR PLEASE REVIEW "Contribution.txt"
 
 The goal of the application is to create a simple and user-friendly system that helps Missouri Medicaid applicants & Caseworkers:
 
