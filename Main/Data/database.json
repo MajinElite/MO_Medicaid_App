@@ -2,7 +2,7 @@
   "users": [
     {
       "email": "applicant1@gmail.com",
-      "password": "1234",
+      "password": "12345",
       "role": "applicant"
     },
     {

@@ -27,7 +27,7 @@ def find_application_by_email(email: str):
     return None
 
 
-# ================= SUBMIT VERIFICATION =================
+# ================= SUBMIT VERIFICATION ==================
 
 def submit_employment_verification(user: dict, payload: dict):
     """
