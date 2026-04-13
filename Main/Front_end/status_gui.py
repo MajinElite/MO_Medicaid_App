@@ -102,10 +102,21 @@ class StatusScreen(ctk.CTkFrame):
             self.status_card.configure(fg_color="#6c757d")  # gray
             self.status_label.configure(text="No Application Submitted")
 
-        elif status in ["Pending", "Under Review"]:
+        elif status in ["Pending", "Under Review", "Exemption Pending"]:
             self.status_card.configure(fg_color="#f0ad4e")  # yellow
-            self.status_label.configure(text="Application Under Review")
-
+            self.status_label.configure(text=f"Application Under Review ({status})")
+            
+        elif status == "Request Info":
+            self.status_card.configure(fg_color="#17a2b8")  # teal
+            self.status_label.configure(text="Action Required: More Information Needed")
+            
+            # Show the reason frame so they know what to fix
+            self.reason_frame.pack(pady=15, padx=60, fill="x")
+            self.reason_label_title.configure(text="Caseworker Notes")
+            self.reason_label_title.pack(pady=(10, 5))
+            self.reason_label.pack(pady=(0, 15))
+            self.reason_label.configure(text=reason if reason else "Please contact your caseworker.")
+        
         elif status == "Approved":
             self.status_card.configure(fg_color="#3cb371")  # green
             self.status_label.configure(text="Application Approved")
