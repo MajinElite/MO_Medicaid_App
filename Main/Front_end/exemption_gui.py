@@ -1,4 +1,4 @@
-# Fallback import in case Tommy hasn't pushed the backend update yetL: UPDATED
+# Fallback import in case Tommy hasn't pushed the backend update yet: UPDATED
 # Ammar: Fixed to work with SQLite Database
 # Front_end/exemption_gui.py
 

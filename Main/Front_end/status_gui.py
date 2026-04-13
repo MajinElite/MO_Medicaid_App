@@ -9,10 +9,6 @@ try:
     from Back_end.application_logic import get_application_status
 except Exception:
     def get_application_status(user):
-        if not user or user.get("role") != "Applicant":
-            return {"status": "None", "reason": ""}
-        if user.get("username") == "applicant1":
-            return {"status": "Pending", "reason": ""}
         return {"status": "None", "reason": ""}
 
 
@@ -31,7 +27,7 @@ class StatusScreen(ctk.CTkFrame):
             corner_radius=0
         ).pack(fill="x", ipady=15)
 
-        # ================= CONTEXT SECTION =================
+        # ================= CONTEXT =================
         context_frame = ctk.CTkFrame(self, corner_radius=10)
         context_frame.pack(pady=20, padx=40, fill="x")
 
@@ -55,11 +51,12 @@ class StatusScreen(ctk.CTkFrame):
         )
         self.status_label.pack(pady=15)
 
-        # ================= DENIAL REASON SECTION =================
+        # ================= REASON SECTION =================
         self.reason_frame = ctk.CTkFrame(self, corner_radius=10)
+
         self.reason_label_title = ctk.CTkLabel(
             self.reason_frame,
-            text="Reason for Denial",
+            text="",
             font=("Helvetica", 14, "bold")
         )
 
@@ -94,42 +91,87 @@ class StatusScreen(ctk.CTkFrame):
 
         status = info.get("status", "None")
         reason = info.get("reason", "")
+        file_name = info.get("request_file_name", "")
+        file_data = info.get("request_file_data_base64", "")
 
-        # Hide reason section by default
+        # Reset UI
         self.reason_frame.pack_forget()
 
         if status == "None":
-            self.status_card.configure(fg_color="#6c757d")  # gray
+            self.status_card.configure(fg_color="#6c757d")
             self.status_label.configure(text="No Application Submitted")
 
         elif status in ["Pending", "Under Review", "Exemption Pending"]:
-            self.status_card.configure(fg_color="#f0ad4e")  # yellow
+            self.status_card.configure(fg_color="#f0ad4e")
             self.status_label.configure(text=f"Application Under Review ({status})")
-            
-        elif status == "Request Info":
-            self.status_card.configure(fg_color="#17a2b8")  # teal
-            self.status_label.configure(text="Action Required: More Information Needed")
-            
-            # Show the reason frame so they know what to fix
+
+        # 🔥 FIXED STATUS NAME
+        elif status == "More Info Required":
+            self.status_card.configure(fg_color="#17a2b8")
+            self.status_label.configure(text="Additional Information Requested")
+
             self.reason_frame.pack(pady=15, padx=60, fill="x")
+
             self.reason_label_title.configure(text="Caseworker Notes")
             self.reason_label_title.pack(pady=(10, 5))
-            self.reason_label.pack(pady=(0, 15))
-            self.reason_label.configure(text=reason if reason else "Please contact your caseworker.")
-        
+
+            self.reason_label.pack(pady=(0, 10))
+            self.reason_label.configure(
+                text=reason if reason else "Please provide the requested information."
+            )
+
+            # 🔥 FILE DOWNLOAD SUPPORT
+            if file_name and file_data:
+                import base64
+                from tkinter import filedialog, messagebox
+
+                def download_file():
+                    try:
+                        file_bytes = base64.b64decode(file_data)
+
+                        ext = ""
+                        if "." in file_name:
+                            ext = file_name.split(".")[-1]
+
+                        save_path = filedialog.asksaveasfilename(
+                            defaultextension=f".{ext}" if ext else "",
+                            initialfile=file_name
+                        )
+
+                        if not save_path:
+                            return
+
+                        if ext and not save_path.lower().endswith(f".{ext}"):
+                            save_path += f".{ext}"
+
+                        with open(save_path, "wb") as f:
+                            f.write(file_bytes)
+
+                        messagebox.showinfo("Success", "File downloaded.")
+
+                    except Exception as e:
+                        messagebox.showerror("Error", str(e))
+
+                ctk.CTkButton(
+                    self.reason_frame,
+                    text=f"Download Attachment: {file_name}",
+                    command=download_file
+                ).pack(pady=(0, 15))
+
         elif status == "Approved":
-            self.status_card.configure(fg_color="#3cb371")  # green
+            self.status_card.configure(fg_color="#3cb371")
             self.status_label.configure(text="Application Approved")
 
         elif status == "Denied":
-            self.status_card.configure(fg_color="#dc3545")  # red
+            self.status_card.configure(fg_color="#dc3545")
             self.status_label.configure(text="Application Denied")
 
-            # Show denial reason section
             self.reason_frame.pack(pady=15, padx=60, fill="x")
-            self.reason_label_title.pack(pady=(10, 5))
-            self.reason_label.pack(pady=(0, 15))
 
+            self.reason_label_title.configure(text="Reason for Denial")
+            self.reason_label_title.pack(pady=(10, 5))
+
+            self.reason_label.pack(pady=(0, 15))
             self.reason_label.configure(
                 text=reason if reason else "No reason provided."
             )

@@ -62,7 +62,7 @@ class CaseworkerDashboard(ctk.CTkFrame):
 
         ctk.CTkOptionMenu(
             left,
-            values=["All", "Pending", "Under Review", "Approved", "Denied"],
+            values=["All", "Pending", "Approved", "Denied", "More Info Required", "Exemption Requests"],
             variable=self.filter_var,
             command=lambda _: self.refresh()
         ).pack(side="left")
@@ -167,7 +167,9 @@ class CaseworkerDashboard(ctk.CTkFrame):
 
         # Filter
         selected = self.filter_var.get()
-        if selected != "All":
+        if selected == "Exemption Requests":
+            apps = [a for a in apps if a.get("form", {}).get("exemption_requested") == "Yes"]
+        elif selected != "All":
             apps = [a for a in apps if a.get("status") == selected]
 
         # Configure columns (IMPORTANT FOR ALIGNMENT)

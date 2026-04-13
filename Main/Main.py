@@ -1,5 +1,6 @@
 import customtkinter as ctk
-
+from Back_end.storage import init_db
+# Initialize the database (creates tables if they don't exist)
 from Front_end.login_gui import LoginScreen
 from Front_end.applicant_dashboard_gui import ApplicantDashboard
 from Front_end.eligibility_gui import EligibilityScreen
@@ -15,6 +16,9 @@ ctk.set_default_color_theme("blue")
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
+
+        init_db()  # Ensure DB is initialized
+        
         self.title("Missouri Medicaid Portal")
         self.geometry("900x650")
 
