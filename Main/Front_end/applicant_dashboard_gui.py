@@ -55,7 +55,14 @@ class ApplicantDashboard(ctk.CTkFrame):
             fg_color=BTN_GREEN,
             command=controller.show_verification
         ).pack(pady=10, ipadx=10, ipady=5)
-
+        # Submit Exemption
+        ctk.CTkButton(
+            self,
+            text="File Exemption Request",
+            font=("Helvetica", 14, "bold"),
+            fg_color=BTN_GREEN, # Using standard green to match the rest
+            command=controller.show_exemption
+        ).pack(pady=10, ipadx=10, ipady=5)
         # Check Application Status
         ctk.CTkButton(
             self,
