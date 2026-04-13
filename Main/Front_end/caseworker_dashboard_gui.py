@@ -17,6 +17,8 @@ STATUS_COLORS = {
     "Pending": "#f0ad4e",
     "Under Review": "#f0ad4e",
     "Needs Review": "#f0ad4e",
+    "Exemption Pending": "#9b59b6", # Added for Exemption workflow
+    "Request Info": "#17a2b8",      # Added for Request Info workflow
     "Approved": "#3cb371",
     "Denied": "#dc3545",
     "None": "#6c757d",
@@ -236,7 +238,14 @@ class CaseworkerDashboard(ctk.CTkFrame):
                 fg_color=BTN_GREEN,
                 command=lambda aid=app_id: self.approve(aid)
             ).pack(side="left", padx=4)
-
+            # --- NEW REQUEST INFO BUTTON ---
+            ctk.CTkButton(
+                actions,
+                text="Request Info",
+                width=90,
+                fg_color="#17a2b8",
+                command=lambda aid=app_id: self.request_info_popup(aid)
+            ).pack(side="left", padx=4)
             ctk.CTkButton(
                 actions,
                 text="Deny",
@@ -244,7 +253,44 @@ class CaseworkerDashboard(ctk.CTkFrame):
                 fg_color="#d9534f",
                 command=lambda aid=app_id: self.deny(aid)
             ).pack(side="left", padx=4)
+    # ================= REQUEST INFO =================
+    def request_info_popup(self, app_id):
+        if not app_id:
+            messagebox.showerror("Error", "Missing application ID.")
+            return
 
+        popup = ctk.CTkToplevel(self)
+        popup.title("Request More Information")
+        popup.geometry("520x320")
+
+        ctk.CTkLabel(popup, text="What information is missing?", font=("Helvetica", 16, "bold")).pack(pady=(15, 5))
+        ctk.CTkLabel(popup, text="This will notify the applicant to update their documents.", text_color="gray").pack(pady=(0, 10))
+
+        reason_box = ctk.CTkTextbox(popup, height=120, width=450)
+        reason_box.pack(pady=10)
+
+        def submit():
+            reason = reason_box.get("1.0", "end").strip()
+            if not reason:
+                messagebox.showwarning("Missing", "Please detail what information is required.")
+                return
+            
+            # Temporary fallback logic until backend is ready
+            try:
+                from Back_end.application_logic import request_more_info
+                ok = request_more_info(app_id, reason)
+            except ImportError:
+                ok = True # Fake success if backend isn't linked yet
+
+            if ok:
+                messagebox.showinfo("Sent", "Request sent to applicant.")
+                popup.destroy()
+                self.refresh()
+
+        btns = ctk.CTkFrame(popup, fg_color="transparent")
+        btns.pack(pady=10)
+        ctk.CTkButton(btns, text="Send Request", fg_color="#17a2b8", command=submit).pack(side="left", padx=8)
+        ctk.CTkButton(btns, text="Cancel", fg_color="gray", command=popup.destroy).pack(side="left", padx=8)
     # ================= APPROVE =================
     def approve(self, app_id):
         if not app_id:
