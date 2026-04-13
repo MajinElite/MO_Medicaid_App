@@ -6,8 +6,8 @@ from Front_end.eligibility_gui import EligibilityScreen
 from Front_end.verification_gui import VerificationScreen
 from Front_end.status_gui import StatusScreen
 from Front_end.caseworker_dashboard_gui import CaseworkerDashboard
-from Front_end.review_program_requirements_gui import ReviewProgramRequirementsScreen  # <-- NEW IMPORT
-
+from Front_end.review_program_requirements_gui import ReviewProgramRequirementsScreen
+from Front_end.exemption_gui import ExemptionScreen # <= Extemption
 # --- The Customtkinter setup ---
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
@@ -60,7 +60,9 @@ class App(ctk.CTk):
     def show_status(self):
         self.clear_window()
         StatusScreen(self.container, self).pack(fill="both", expand=True)
-
+    def show_exemption(self):
+        self.clear_window()
+        ExemptionScreen(self.container, self).pack(fill="both", expand=True)
     # ---------- NEW ROUTE ----------
     def show_review_program_requirements(self):
         self.clear_window()
