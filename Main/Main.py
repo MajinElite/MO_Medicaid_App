@@ -1,3 +1,4 @@
+# Duy created base foundation, Ammar reworked to fit with SQLite database & made navigation to different screens work properly.
 import customtkinter as ctk
 from Back_end.storage import init_db
 # Initialize the database (creates tables if they don't exist)
