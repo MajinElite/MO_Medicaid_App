@@ -1,5 +1,3 @@
-PROFESSOR PLEASE REVIEW "Contribution.txt"
-
 The goal of the application is to create a simple and user-friendly system that helps Missouri Medicaid applicants & Caseworkers:
 
 - Understand program requirements
@@ -27,10 +25,10 @@ BUILT WITH
 ------------------------------------------------------------
 
 - Python
-- CustomTkinter (GUI)
-- JSON for data storage
+- CustomTkinter (Interface)
+- SQlite for data storage & File Handling
 
 ------------------------------------------------------------
 
 Current Development Phase:
-Sprint 2 implementation and feature expansion.
+Sprint 6 implementation and feature expansion.
