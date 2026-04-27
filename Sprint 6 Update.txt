@@ -1,0 +1,142 @@
+SPRINT 6 CODE CHANGES SUMMARY
+
+REMOVED / CUT
+- Removed the big Applicant Login vs Caseworker Login selection screen idea.
+- Removed the Medicaid logo from the login direction.
+
+UPDATED / CHANGED
+
+1. login_gui.py
+- Applicant Login now opens by default.
+- Caseworker login was changed to Staff Access.
+- Staff Login now supports both caseworker and admin users.
+- Added role-based login restrictions.
+- Added admin routing.
+- Added locked-account blocking.
+- Added functional Remember Me.
+- Added Show Password.
+- Improved login validation and error messages.
+- Orange theme applied to staff login.
+- Blue theme kept for applicant login.
+
+2. Main.py
+- Added route for Admin User Management.
+- Added fallback message if admin screen file is missing.
+- Kept all existing applicant and caseworker routes.
+
+3. auth.py
+- Updated authentication to return role and status.
+- Added admin role support.
+- Added locked user handling.
+- Supports applicant, caseworker, and admin roles.
+
+4. storage.py
+- Added user status field: active / locked.
+- Added created_at and updated_at fields for users.
+- Added default admin account:
+  admin@example.com / admin123
+- Added dummy applicant and caseworker accounts.
+- Added user management backend functions:
+  get_all_managed_users
+  create_user
+  update_user
+  delete_user
+  lock_user
+  unlock_user
+- Admin accounts are hidden from user management.
+
+5. admin_user_management_gui.py
+- New screen created.
+- Admin can view applicant and caseworker accounts.
+- Admin can add users.
+- Admin can edit users.
+- Admin can lock/unlock users.
+- Admin can delete users.
+- Admin account does not show in the list.
+- Orange admin/staff theme applied.
+- Layout centered inside a smaller admin panel.
+
+6. verification_gui.py
+- Kept original form fields.
+- Added Clear Form button.
+- Improved required field validation.
+- Added validation for Start Date format.
+- Added validation for Hours Per Week.
+- Added validation for Monthly Gross Income.
+- Improved error messages with examples.
+- Improved success message.
+
+7. eligibility_gui.py
+- Added required field markers.
+- Added Clear Form button.
+- Added validation for household size.
+- Added validation for monthly income.
+- Added examples inside error messages.
+- Added Enter key support.
+- Added text labels beside color-coded results.
+- Improved result wording.
+
+8. status_gui.py
+- Improved status wording.
+- Added text descriptions for each status.
+- Added color labels in text:
+  Green, Yellow, Red, Blue.
+- Improved denial reason display.
+- Improved more-info request display.
+- Kept file download support.
+
+9. caseworker_dashboard_gui.py
+- Changed theme from blue to orange.
+- Improved dashboard instructions.
+- Improved filter label.
+- Improved status badge text.
+- Improved document badge text.
+- Added confirmation before approving.
+- Denial requires a reason.
+- Request More Info requires a message.
+- Improved error and success messages.
+- Fixed cramped action buttons by stacking them vertically.
+- Kept approve/deny/request info available so mistakes can be corrected.
+
+10. caseworker_view_popup.py
+- Rebuilt layout into clearer sections.
+- Added orange caseworker theme.
+- Added Application Summary section.
+- Added Employment Details section.
+- Added Exemption Request section.
+- Added Applicant Uploaded Document section.
+- Improved spacing and readability.
+- Improved missing value wording.
+- Kept document preview/download support.
+
+11. exemption_gui.py
+- Added context/instruction text.
+- Added required field markers.
+- Added stronger validation.
+- Exemption reason is required.
+- Short explanations are rejected.
+- Added Clear Form button.
+- Improved error messages.
+- Improved success message:
+  Status is now Exemption Pending.
+
+12. applicant_dashboard_gui.py
+- Updated title to Applicant Portal.
+- Improved welcome text.
+- Improved card sizing and spacing.
+- Improved descriptions under each card.
+- Kept same dashboard actions.
+- Kept simple blue applicant theme.
+
+ADDED FEATURES
+- Admin login
+- Admin user management
+- Lock/unlock user accounts
+- Dummy users for presentation/demo
+- Staff Access login path
+- Role-based login restrictions
+- Better validation across forms
+- Clear Form buttons
+- More specific error messages
+- ADA-friendly status text labels
+- Confirmation dialogs for major caseworker actions
