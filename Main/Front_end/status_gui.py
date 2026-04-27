@@ -23,8 +23,7 @@ class StatusScreen(ctk.CTkFrame):
             text="Application Status",
             font=("Helvetica", 24, "bold"),
             fg_color=HEADER_BLUE,
-            text_color="white",
-            corner_radius=0
+            text_color="white"
         ).pack(fill="x", ipady=15)
 
         # ================= CONTEXT =================
@@ -33,8 +32,10 @@ class StatusScreen(ctk.CTkFrame):
 
         ctk.CTkLabel(
             context_frame,
-            text="This page shows the current status of your submitted application.\n"
-                 "Updates occur after caseworker review.",
+            text=(
+                "This page shows the current status of your submitted application.\n"
+                "Updates occur after caseworker review."
+            ),
             font=("Helvetica", 13),
             justify="center"
         ).pack(pady=15)
@@ -47,11 +48,13 @@ class StatusScreen(ctk.CTkFrame):
             self.status_card,
             text="",
             font=("Helvetica", 18, "bold"),
-            text_color="white"
+            text_color="white",
+            wraplength=600,
+            justify="center"
         )
         self.status_label.pack(pady=15)
 
-        # ================= REASON SECTION =================
+        # ================= REASON =================
         self.reason_frame = ctk.CTkFrame(self, corner_radius=10)
 
         self.reason_label_title = ctk.CTkLabel(
@@ -85,6 +88,7 @@ class StatusScreen(ctk.CTkFrame):
 
         self.refresh()
 
+    # ================= STATUS LOGIC =================
     def refresh(self):
         user = self.controller.current_user
         info = get_application_status(user)
@@ -94,21 +98,34 @@ class StatusScreen(ctk.CTkFrame):
         file_name = info.get("request_file_name", "")
         file_data = info.get("request_file_data_base64", "")
 
-        # Reset UI
         self.reason_frame.pack_forget()
 
+        # ================= NONE =================
         if status == "None":
             self.status_card.configure(fg_color="#6c757d")
-            self.status_label.configure(text="No Application Submitted")
+            self.status_label.configure(
+                text="No Application Submitted\nYou have not submitted an application yet."
+            )
 
+        # ================= PENDING =================
         elif status in ["Pending", "Under Review", "Exemption Pending"]:
             self.status_card.configure(fg_color="#f0ad4e")
-            self.status_label.configure(text=f"Application Under Review ({status})")
+            self.status_label.configure(
+                text=(
+                    "Status: Pending Review \n"
+                    "Your application has been submitted and is waiting for a caseworker to review it."
+                )
+            )
 
-        # 🔥 FIXED STATUS NAME
+        # ================= MORE INFO =================
         elif status == "More Info Required":
             self.status_card.configure(fg_color="#17a2b8")
-            self.status_label.configure(text="Additional Information Requested")
+            self.status_label.configure(
+                text=(
+                    "Status: More Information Required (Blue)\n"
+                    "A caseworker needs additional information to continue your review."
+                )
+            )
 
             self.reason_frame.pack(pady=15, padx=60, fill="x")
 
@@ -120,7 +137,7 @@ class StatusScreen(ctk.CTkFrame):
                 text=reason if reason else "Please provide the requested information."
             )
 
-            # 🔥 FILE DOWNLOAD SUPPORT
+            # File download
             if file_name and file_data:
                 import base64
                 from tkinter import filedialog, messagebox
@@ -129,25 +146,17 @@ class StatusScreen(ctk.CTkFrame):
                     try:
                         file_bytes = base64.b64decode(file_data)
 
-                        ext = ""
-                        if "." in file_name:
-                            ext = file_name.split(".")[-1]
-
                         save_path = filedialog.asksaveasfilename(
-                            defaultextension=f".{ext}" if ext else "",
                             initialfile=file_name
                         )
 
                         if not save_path:
                             return
 
-                        if ext and not save_path.lower().endswith(f".{ext}"):
-                            save_path += f".{ext}"
-
                         with open(save_path, "wb") as f:
                             f.write(file_bytes)
 
-                        messagebox.showinfo("Success", "File downloaded.")
+                        messagebox.showinfo("Download Complete", "File downloaded successfully.")
 
                     except Exception as e:
                         messagebox.showerror("Error", str(e))
@@ -158,24 +167,37 @@ class StatusScreen(ctk.CTkFrame):
                     command=download_file
                 ).pack(pady=(0, 15))
 
+        # ================= APPROVED =================
         elif status == "Approved":
             self.status_card.configure(fg_color="#3cb371")
-            self.status_label.configure(text="Application Approved")
+            self.status_label.configure(
+                text=(
+                    "Status: Approved \n"
+                    "Your application has been approved based on the information provided."
+                )
+            )
 
+        # ================= DENIED =================
         elif status == "Denied":
             self.status_card.configure(fg_color="#dc3545")
-            self.status_label.configure(text="Application Denied")
+            self.status_label.configure(
+                text=(
+                    "Status: Denied \n"
+                    "Your application was not approved based on the submitted information."
+                )
+            )
 
             self.reason_frame.pack(pady=15, padx=60, fill="x")
 
-            self.reason_label_title.configure(text="Reason for Denial")
+            self.reason_label_title.configure(text="Reason for Decision")
             self.reason_label_title.pack(pady=(10, 5))
 
             self.reason_label.pack(pady=(0, 15))
             self.reason_label.configure(
-                text=reason if reason else "No reason provided."
+                text=reason if reason else "No specific reason was provided."
             )
 
+        # ================= DEFAULT =================
         else:
             self.status_card.configure(fg_color="#6c757d")
-            self.status_label.configure(text=status)
+            self.status_label.configure(text=f"Status: {status}")

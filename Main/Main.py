@@ -1,7 +1,8 @@
 # Duy created base foundation, Ammar reworked to fit with SQLite database & made navigation to different screens work properly.
+
 import customtkinter as ctk
 from Back_end.storage import init_db
-# Initialize the database (creates tables if they don't exist)
+
 from Front_end.login_gui import LoginScreen
 from Front_end.applicant_dashboard_gui import ApplicantDashboard
 from Front_end.eligibility_gui import EligibilityScreen
@@ -9,21 +10,30 @@ from Front_end.verification_gui import VerificationScreen
 from Front_end.status_gui import StatusScreen
 from Front_end.caseworker_dashboard_gui import CaseworkerDashboard
 from Front_end.review_program_requirements_gui import ReviewProgramRequirementsScreen
-from Front_end.exemption_gui import ExemptionScreen # <= Extemption
+from Front_end.exemption_gui import ExemptionScreen
+
+# New admin screen
+try:
+    from Front_end.admin_user_management_gui import AdminUserManagementScreen
+except Exception:
+    AdminUserManagementScreen = None
+
+
 # --- The Customtkinter setup ---
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
+
 
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        init_db()  # Ensure DB is initialized
-        
+        init_db()
+
         self.title("Missouri Medicaid Portal")
         self.geometry("900x650")
 
-        self.current_user = None  # {"username": "", "role": "Applicant|Caseworker", "name": ""}
+        self.current_user = None
 
         self.container = ctk.CTkFrame(self, fg_color="transparent")
         self.container.pack(fill="both", expand=True)
@@ -54,6 +64,19 @@ class App(ctk.CTk):
         self.clear_window()
         CaseworkerDashboard(self.container, self).pack(fill="both", expand=True)
 
+    def show_admin_user_management(self):
+        self.clear_window()
+
+        if AdminUserManagementScreen is None:
+            ctk.CTkLabel(
+                self.container,
+                text="Admin User Management screen has not been created yet.",
+                font=("Helvetica", 18, "bold")
+            ).pack(expand=True)
+            return
+
+        AdminUserManagementScreen(self.container, self).pack(fill="both", expand=True)
+
     def show_eligibility(self):
         self.clear_window()
         EligibilityScreen(self.container, self).pack(fill="both", expand=True)
@@ -65,10 +88,11 @@ class App(ctk.CTk):
     def show_status(self):
         self.clear_window()
         StatusScreen(self.container, self).pack(fill="both", expand=True)
+
     def show_exemption(self):
         self.clear_window()
         ExemptionScreen(self.container, self).pack(fill="both", expand=True)
-    # ---------- NEW ROUTE ----------
+
     def show_review_program_requirements(self):
         self.clear_window()
         ReviewProgramRequirementsScreen(self.container, self).pack(fill="both", expand=True)

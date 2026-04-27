@@ -2,6 +2,7 @@
 
 import base64
 import os
+import re
 import customtkinter as ctk
 import tkinter as tk
 from tkinter import filedialog, messagebox
@@ -26,15 +27,12 @@ class VerificationScreen(ctk.CTkFrame):
         self.controller = controller
         self.entries = {}
 
-        # Stores the uploaded file content for database saving
         self.file_original_name = ""
         self.file_base64 = ""
 
-        # ================= SCROLLABLE CONTAINER =================
         self.scroll_frame = ctk.CTkScrollableFrame(self, fg_color="transparent")
         self.scroll_frame.pack(fill="both", expand=True)
 
-        # ================= HEADER =================
         ctk.CTkLabel(
             self.scroll_frame,
             text="Employment Verification Form",
@@ -44,7 +42,6 @@ class VerificationScreen(ctk.CTkFrame):
             corner_radius=0
         ).pack(fill="x", ipady=15)
 
-        # ================= CONTEXT =================
         context = ctk.CTkFrame(self.scroll_frame, corner_radius=10)
         context.pack(pady=20, padx=60, fill="x")
 
@@ -52,22 +49,19 @@ class VerificationScreen(ctk.CTkFrame):
             context,
             text=(
                 "This form verifies employment details for Medicaid eligibility review.\n"
-                "Please ensure all required fields are accurate before submission."
+                "Please ensure all required fields marked with * are accurate before submission."
             ),
             font=("Helvetica", 13),
             justify="center"
         ).pack(pady=15)
 
-        # ================= APPLICANT INFO =================
         self.create_section("Applicant Information")
         self.add_entry("Applicant Name", "applicant_name", required=True)
 
-        # ================= EMPLOYMENT INFO =================
         self.create_section("Employment Information")
         self.add_entry("Employer Name", "employer_name", required=True)
         self.add_entry("Employee ID", "employee_id", required=True)
 
-        # Employment Status
         ctk.CTkLabel(
             self.section_body,
             text="Employment Status:",
@@ -90,7 +84,6 @@ class VerificationScreen(ctk.CTkFrame):
         self.add_entry("Hours Per Week", "hours_per_week", required=True)
         self.add_entry("Monthly Gross Income ($)", "monthly_income", required=False)
 
-        # ================= DOCUMENTS =================
         self.create_section("Supporting Documents")
 
         doc_frame = ctk.CTkFrame(self.section_body, fg_color="transparent")
@@ -114,13 +107,11 @@ class VerificationScreen(ctk.CTkFrame):
             font=("Helvetica", 12)
         ).pack(anchor="w", padx=20)
 
-        # ================= ADDITIONAL INFO =================
         self.create_section("Additional Information (Optional)")
 
         self.additional_text = ctk.CTkTextbox(self.section_body, height=120)
         self.additional_text.pack(fill="x", padx=20, pady=15)
 
-        # ================= BUTTONS =================
         ctk.CTkButton(
             self.scroll_frame,
             text="Submit Verification Form",
@@ -130,15 +121,20 @@ class VerificationScreen(ctk.CTkFrame):
 
         ctk.CTkButton(
             self.scroll_frame,
+            text="Clear Form",
+            fg_color="gray",
+            command=self.clear_form
+        ).pack(pady=5)
+
+        ctk.CTkButton(
+            self.scroll_frame,
             text="Back",
             fg_color="gray",
             command=controller.show_applicant_dashboard
         ).pack(pady=5)
 
-        # Bottom padding for breathing room
         ctk.CTkLabel(self.scroll_frame, text="").pack(pady=30)
 
-    # ================= SECTION CREATOR =================
     def create_section(self, title):
         section_frame = ctk.CTkFrame(
             self.scroll_frame,
@@ -160,11 +156,10 @@ class VerificationScreen(ctk.CTkFrame):
         self.section_body = ctk.CTkFrame(section_frame, fg_color=BODY_BG)
         self.section_body.pack(fill="x")
 
-    # ================= ENTRY CREATOR =================
     def add_entry(self, label, key, required=False):
         ctk.CTkLabel(
             self.section_body,
-            text=label + (":" if not required else ": *"),
+            text=label + (": *" if required else ":"),
             text_color="white"
         ).pack(anchor="w", padx=20, pady=(10, 5))
 
@@ -173,7 +168,6 @@ class VerificationScreen(ctk.CTkFrame):
 
         self.entries[key] = {"widget": entry, "required": required}
 
-    # ================= FILE UPLOAD =================
     def upload_file(self):
         filename = filedialog.askopenfilename(
             filetypes=[
@@ -182,11 +176,11 @@ class VerificationScreen(ctk.CTkFrame):
                 ("All Files", "*.*")
             ]
         )
+
         if not filename:
             return
 
         try:
-            # Read the file in binary, encode to base64 for JSON storage
             with open(filename, "rb") as f:
                 file_bytes = f.read()
 
@@ -199,13 +193,45 @@ class VerificationScreen(ctk.CTkFrame):
         except Exception as e:
             self.file_base64 = ""
             self.file_original_name = ""
-            messagebox.showerror("Error", f"File upload failed: {e}")
+            messagebox.showerror(
+                "File Upload Failed",
+                f"The file could not be uploaded. Please try again.\n\nDetails: {e}"
+            )
 
-    # ================= SUBMIT =================
+    def clear_form(self):
+        for data in self.entries.values():
+            data["widget"].delete(0, "end")
+            data["widget"].configure(border_color="#565b5e")
+
+        self.status_var.set("Full-Time")
+        self.additional_text.delete("1.0", "end")
+
+        self.doc_entry.delete(0, tk.END)
+        self.file_base64 = ""
+        self.file_original_name = ""
+
+        messagebox.showinfo(
+            "Form Cleared",
+            "The form has been cleared. You can now enter new information."
+        )
+
+    def is_valid_date(self, value):
+        return re.fullmatch(r"\d{2}/\d{2}/\d{4}", value) is not None
+
+    def is_positive_number(self, value):
+        try:
+            return float(value) > 0
+        except ValueError:
+            return False
+
     def submit(self):
         user = getattr(self.controller, "current_user", None)
+
         if not user:
-            messagebox.showerror("Error", "No user session found.")
+            messagebox.showerror(
+                "Session Error",
+                "No user session was found. Please log in again before submitting the form."
+            )
             return
 
         payload = {}
@@ -223,15 +249,38 @@ class VerificationScreen(ctk.CTkFrame):
 
         payload["employment_status"] = self.status_var.get().strip()
         payload["additional_information"] = self.additional_text.get("1.0", "end").strip()
-
-        # Save uploaded document into the database
         payload["document_name"] = self.file_original_name
         payload["document_data_base64"] = self.file_base64
 
         if missing:
             messagebox.showwarning(
-                "Missing Information",
-                "Please complete all required fields before submitting."
+                "Missing Required Information",
+                "Please complete all required fields marked with * before submitting."
+            )
+            return
+
+        if not self.is_valid_date(payload["start_date"]):
+            self.entries["start_date"]["widget"].configure(border_color=ERROR_RED)
+            messagebox.showerror(
+                "Invalid Start Date",
+                "Start Date must be entered in MM/DD/YYYY format.\nExample: 04/28/2026"
+            )
+            return
+
+        if not self.is_positive_number(payload["hours_per_week"]):
+            self.entries["hours_per_week"]["widget"].configure(border_color=ERROR_RED)
+            messagebox.showerror(
+                "Invalid Hours Per Week",
+                "Hours Per Week must be a number greater than 0.\nExample: 40"
+            )
+            return
+
+        monthly_income = payload.get("monthly_income", "").strip()
+        if monthly_income and not self.is_positive_number(monthly_income):
+            self.entries["monthly_income"]["widget"].configure(border_color=ERROR_RED)
+            messagebox.showerror(
+                "Invalid Monthly Gross Income",
+                "Monthly Gross Income must be a number greater than 0.\nExample: 2500"
             )
             return
 
@@ -239,9 +288,12 @@ class VerificationScreen(ctk.CTkFrame):
 
         if ok:
             messagebox.showinfo(
-                "Success",
-                "Form submitted for review.\nStatus is now Pending."
+                "Submission Successful",
+                "Employment verification submitted successfully.\nStatus is now Pending Review."
             )
             self.controller.show_status()
         else:
-            messagebox.showerror("Error", "Submit failed.")
+            messagebox.showerror(
+                "Submission Failed",
+                "The form could not be submitted. Please review the information and try again."
+            )

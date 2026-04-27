@@ -3,20 +3,27 @@ from Back_end.storage import get_connection
 
 def authenticate_user(email: str, password: str):
     """
-    Looks up the user in SQLite by email + password.
+    Authenticates user from database.
 
     Returns:
-      {"email": "...", "role": "applicant|caseworker"} if valid
-      None if invalid
+        {
+            "email": "...",
+            "role": "applicant|caseworker|admin",
+            "status": "active|locked"
+        }
+    OR
+        None if invalid or locked
     """
+
     email_clean = (email or "").strip().lower()
     password_clean = password or ""
 
     conn = get_connection()
     cursor = conn.cursor()
 
+    # 🔥 Updated query (includes status)
     cursor.execute("""
-        SELECT email, role
+        SELECT email, role, status
         FROM users
         WHERE lower(email) = ? AND password = ?
     """, (email_clean, password_clean))
@@ -24,10 +31,24 @@ def authenticate_user(email: str, password: str):
     row = cursor.fetchone()
     conn.close()
 
-    if row:
+    if not row:
+        return None
+
+    email_db, role_db, status_db = row
+
+    role = (role_db or "").strip().lower()
+    status = (status_db or "active").strip().lower()
+
+    # 🔒 Block locked users
+    if status == "locked":
         return {
-            "email": row[0],
-            "role": (row[1] or "").strip().lower()
+            "email": email_db,
+            "role": role,
+            "status": "locked"
         }
 
-    return None
+    return {
+        "email": email_db,
+        "role": role,
+        "status": status
+    }
